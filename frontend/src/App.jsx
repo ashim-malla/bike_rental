@@ -1,8 +1,10 @@
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import Navbar from "./components/Navbar"
 import CheckoutPage from "./pages/CheckoutPage"
 import LoginPage from "./pages/LoginPage"
 import SignupPage from "./pages/SignupPage"
+
+const API = "http://127.0.0.1:8000"
 
 function Icon({ name, className = "h-5 w-5" }) {
   const paths = {
@@ -63,220 +65,22 @@ function Icon({ name, className = "h-5 w-5" }) {
 
 const motorbikeTypes = [
   {
-    name: "The Scooter",
     page: "scooter",
+    label: "The Scooter",
     type: "Easy city rides",
-    price: 1800,
     color: "bg-[#d9e8ff]",
-    image:
-      "https://images.unsplash.com/photo-1554223789-df81106a45ed?auto=format&fit=crop&w=900&q=85",
   },
   {
-    name: "The Street",
     page: "street",
+    label: "The Street",
     type: "Everyday power",
-    price: 2500,
     color: "bg-[#e8e1ff]",
-    image:
-      "https://images.unsplash.com/photo-1610886147082-2f8dfa0c1f1b?auto=format&fit=crop&w=900&q=85",
   },
   {
-    name: "The Adventure",
     page: "adventure",
+    label: "The Adventure",
     type: "Beyond the city",
-    price: 3500,
     color: "bg-[#dff1d8]",
-    image:
-      "https://images.unsplash.com/photo-1627028411626-e417caae90ac?auto=format&fit=crop&w=900&q=85",
-  },
-]
-
-const availableCityMotorbikes = [
-  {
-    id: "SC-104",
-    name: "Yamaha Ray ZR",
-    station: "Thamel hub",
-    distance: "2 min walk",
-    engine: "125cc · Automatic",
-    price: 1800,
-    image:
-      "https://images.unsplash.com/photo-1554223789-df81106a45ed?auto=format&fit=crop&w=900&q=85",
-  },
-  {
-    id: "SC-118",
-    name: "Honda Dio",
-    station: "Thamel hub",
-    distance: "2 min walk",
-    engine: "110cc · Automatic",
-    price: 1700,
-    image:
-      "https://images.unsplash.com/photo-1597755269789-89407cf1a199?auto=format&fit=crop&w=900&q=85",
-  },
-  {
-    id: "ST-127",
-    name: "Bajaj Pulsar",
-    station: "Durbar Marg",
-    distance: "6 min walk",
-    engine: "150cc · 5-speed",
-    price: 2400,
-    image:
-      "https://images.unsplash.com/photo-1610886147082-2f8dfa0c1f1b?auto=format&fit=crop&w=900&q=85",
-  },
-  {
-    id: "ST-132",
-    name: "TVS Apache",
-    station: "Lazimpat",
-    distance: "8 min walk",
-    engine: "160cc · 5-speed",
-    price: 2600,
-    image:
-      "https://images.unsplash.com/photo-1606837731961-c5211df9aa10?auto=format&fit=crop&w=900&q=85",
-  },
-  {
-    id: "SC-145",
-    name: "Aprilia SR",
-    station: "Patan hub",
-    distance: "11 min walk",
-    engine: "125cc · Automatic",
-    price: 2100,
-    image:
-      "https://images.unsplash.com/photo-1612163803167-530551f280ca?auto=format&fit=crop&w=900&q=85",
-  },
-  {
-    id: "ST-151",
-    name: "Yamaha FZ",
-    station: "Boudha hub",
-    distance: "14 min walk",
-    engine: "150cc · 5-speed",
-    price: 2800,
-    image:
-      "https://images.unsplash.com/photo-1627028411626-e417caae90ac?auto=format&fit=crop&w=900&q=85",
-  },
-]
-
-const availableStreetMotorbikes = [
-  {
-    id: "ST-204",
-    name: "Yamaha FZ V3",
-    station: "Thamel hub",
-    distance: "2 min walk",
-    engine: "150cc · 5-speed",
-    price: 2800,
-    image:
-      "https://images.unsplash.com/photo-1495480393121-409eb65c7fbe?auto=format&fit=crop&w=900&q=85",
-  },
-  {
-    id: "ST-218",
-    name: "TVS Apache RTR",
-    station: "Thamel hub",
-    distance: "2 min walk",
-    engine: "160cc · 5-speed",
-    price: 2900,
-    image:
-      "https://images.unsplash.com/photo-1784631912592-a21ac9d05984?auto=format&fit=crop&w=900&q=85",
-  },
-  {
-    id: "ST-227",
-    name: "Bajaj Pulsar N160",
-    station: "Durbar Marg",
-    distance: "6 min walk",
-    engine: "160cc · 5-speed",
-    price: 2700,
-    image:
-      "https://images.unsplash.com/photo-1776164020959-7a284d72db31?auto=format&fit=crop&w=900&q=85",
-  },
-  {
-    id: "ST-232",
-    name: "Honda Hornet",
-    station: "Lazimpat",
-    distance: "8 min walk",
-    engine: "184cc · 5-speed",
-    price: 3200,
-    image:
-      "https://images.unsplash.com/photo-1792178607072-bb8ef7276cf5?auto=format&fit=crop&w=900&q=85",
-  },
-  {
-    id: "ST-245",
-    name: "Suzuki Gixxer",
-    station: "Patan hub",
-    distance: "11 min walk",
-    engine: "155cc · 5-speed",
-    price: 3000,
-    image:
-      "https://images.unsplash.com/photo-1759770384302-8bc811e29acb?auto=format&fit=crop&w=900&q=85",
-  },
-  {
-    id: "ST-251",
-    name: "KTM Duke 200",
-    station: "Boudha hub",
-    distance: "14 min walk",
-    engine: "200cc · 6-speed",
-    price: 3800,
-    image:
-      "https://images.unsplash.com/photo-1763380270054-fad681b11348?auto=format&fit=crop&w=900&q=85",
-  },
-]
-
-const availableAdventureMotorbikes = [
-  {
-    id: "AD-304",
-    name: "Royal Enfield Himalayan",
-    station: "Thamel hub",
-    distance: "2 min walk",
-    engine: "411cc · 5-speed",
-    price: 4800,
-    image:
-      "https://images.unsplash.com/photo-1764748067741-1215f8975c22?auto=format&fit=crop&w=900&q=85",
-  },
-  {
-    id: "AD-318",
-    name: "KTM Adventure 250",
-    station: "Thamel hub",
-    distance: "2 min walk",
-    engine: "250cc · 6-speed",
-    price: 5200,
-    image:
-      "https://images.unsplash.com/photo-1771427795503-74fa80babf5d?auto=format&fit=crop&w=900&q=85",
-  },
-  {
-    id: "AD-327",
-    name: "Honda CRF 250L",
-    station: "Balaju hub",
-    distance: "9 min walk",
-    engine: "250cc · 6-speed",
-    price: 5500,
-    image:
-      "https://images.unsplash.com/photo-1771184031738-7ff9bae1965e?auto=format&fit=crop&w=900&q=85",
-  },
-  {
-    id: "AD-332",
-    name: "BMW G 310 GS",
-    station: "Patan hub",
-    distance: "11 min walk",
-    engine: "313cc · 6-speed",
-    price: 6500,
-    image:
-      "https://images.unsplash.com/photo-1761415476148-4637cc80d5d0?auto=format&fit=crop&w=900&q=85",
-  },
-  {
-    id: "AD-345",
-    name: "Yezdi Adventure",
-    station: "Boudha hub",
-    distance: "14 min walk",
-    engine: "334cc · 6-speed",
-    price: 4600,
-    image:
-      "https://images.unsplash.com/photo-1781036725046-56d24290d1bd?auto=format&fit=crop&w=900&q=85",
-  },
-  {
-    id: "AD-351",
-    name: "Hero XPulse 200",
-    station: "Bhaktapur hub",
-    distance: "18 min walk",
-    engine: "200cc · 5-speed",
-    price: 3900,
-    image:
-      "https://images.unsplash.com/photo-1781036725018-51e4499354c6?auto=format&fit=crop&w=900&q=85",
   },
 ]
 
@@ -286,7 +90,6 @@ const availabilityPages = {
     accent: "ready to ride.",
     description:
       "Light, automatic, and easy to handle. Choose a city scooter for effortless everyday exploring.",
-    inventory: availableCityMotorbikes,
     imageBackground: "bg-[#d9e8ff]",
   },
   street: {
@@ -294,7 +97,6 @@ const availabilityPages = {
     accent: "made to move.",
     description:
       "Responsive power and confident handling for city streets, ring roads, and everyday escapes.",
-    inventory: availableStreetMotorbikes,
     imageBackground: "bg-[#e8e1ff]",
   },
   adventure: {
@@ -302,23 +104,61 @@ const availabilityPages = {
     accent: "go beyond.",
     description:
       "Tour-ready machines built for mountain roads, long days, and journeys beyond the valley.",
-    inventory: availableAdventureMotorbikes,
     imageBackground: "bg-[#dff1d8]",
   },
 }
 
-const formatNpr = (price) => `NPR ${price.toLocaleString("en-NP")}`
+const formatNpr = (rate) => `NPR ${Number(rate).toLocaleString("en-NP")}`
+
+function getCategoryCard(fleet, category) {
+  const inCategory = fleet.filter((bike) => bike.category === category)
+  const bike =
+    inCategory.find((b) => b.availability && b.image) ||
+    inCategory.find((b) => b.availability) ||
+    inCategory[0]
+  const lowestRate = inCategory.length
+    ? Math.min(...inCategory.map((b) => Number(b.rate)))
+    : null
+  return { bike, lowestRate }
+}
 
 function MotorbikeAvailabilityPage({ category, onBack, onViewMotorbike }) {
   const pageDetails = availabilityPages[category]
-  const { inventory } = pageDetails
-  const [selectedMotorbike, setSelectedMotorbike] = useState("")
-  const [station, setStation] = useState("All rental hubs")
+  const [inventory, setInventory] = useState([])
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState("")
+  const [selectedId, setSelectedId] = useState(null)
+  const [brand, setBrand] = useState("All brands")
+
+  useEffect(() => {
+    let ignore = false
+    fetch(`${API}/api/bikes/?category=${category}`)
+      .then((res) => {
+        if (!res.ok) throw new Error("Request failed")
+        return res.json()
+      })
+      .then((data) => {
+        if (!ignore) setInventory(data)
+      })
+      .catch(() => {
+        if (!ignore)
+          setError("Could not load motorbikes. Is the Django server running?")
+      })
+      .finally(() => {
+        if (!ignore) setLoading(false)
+      })
+    return () => {
+      ignore = true
+    }
+  }, [category])
+
+  const availableCount = inventory.filter((m) => m.availability).length
+  const brands = [...new Set(inventory.map((m) => m.brand))]
   const visibleMotorbikes =
-    station === "All rental hubs"
+    brand === "All brands"
       ? inventory
-      : inventory.filter((motorbike) => motorbike.station === station)
-  const stations = [...new Set(inventory.map((motorbike) => motorbike.station))]
+      : inventory.filter((m) => m.brand === brand)
+  const selected = inventory.find((m) => m.id === selectedId)
 
   return (
     <main className="min-h-screen bg-[#f4f1e8] text-[#10231d]">
@@ -367,7 +207,7 @@ function MotorbikeAvailabilityPage({ category, onBack, onViewMotorbike }) {
               </span>
               <div>
                 <p className="text-sm font-bold">
-                  {inventory.length} motorbikes available
+                  {availableCount} motorbikes available
                 </p>
                 <p className="text-xs text-white/55">Updated just now</p>
               </div>
@@ -380,91 +220,109 @@ function MotorbikeAvailabilityPage({ category, onBack, onViewMotorbike }) {
         <div className="mb-9 flex flex-col justify-between gap-5 border-b border-[#10231d]/15 pb-7 sm:flex-row sm:items-center">
           <div>
             <p className="text-xs font-bold uppercase tracking-[0.16em] text-[#607a54]">
-              Available now
+              Choose your ride
             </p>
             <h2 className="mt-2 text-2xl font-bold tracking-[-0.035em]">
-              {visibleMotorbikes.length} motorbikes near you
+              {visibleMotorbikes.length} motorbikes
             </h2>
           </div>
           <label className="flex min-w-[220px] items-center gap-3 rounded-xl border border-[#10231d]/15 bg-white px-4 py-3">
             <Icon name="location" className="h-4 w-4 text-[#607a54]" />
             <select
-              value={station}
-              onChange={(event) => setStation(event.target.value)}
+              value={brand}
+              onChange={(event) => setBrand(event.target.value)}
               className="w-full appearance-none bg-transparent text-sm font-semibold outline-none"
             >
-              <option>All rental hubs</option>
-              {stations.map((rentalHub) => (
-                <option key={rentalHub}>{rentalHub}</option>
+              <option>All brands</option>
+              {brands.map((b) => (
+                <option key={b}>{b}</option>
               ))}
             </select>
             <Icon name="chevron" className="h-4 w-4" />
           </label>
         </div>
 
+        {loading && (
+          <p className="text-sm text-[#718078]">Loading motorbikes…</p>
+        )}
+        {error && (
+          <p className="rounded-xl bg-[#ffe3df] px-4 py-3 text-sm font-semibold text-[#8a2f25]">
+            {error}
+          </p>
+        )}
+        {!loading && !error && visibleMotorbikes.length === 0 && (
+          <p className="text-sm text-[#718078]">
+            No motorbikes in this category yet.
+          </p>
+        )}
+
         <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
           {visibleMotorbikes.map((motorbike) => (
             <article
               key={motorbike.id}
-              onClick={() => onViewMotorbike(motorbike, category)}
-              className="group cursor-pointer overflow-hidden rounded-[24px] bg-white shadow-[0_8px_30px_rgba(16,35,29,0.06)] transition hover:-translate-y-1 hover:shadow-[0_16px_40px_rgba(16,35,29,0.1)]"
+              onClick={() =>
+                motorbike.availability && onViewMotorbike(motorbike, category)
+              }
+              className={`group overflow-hidden rounded-[24px] bg-white shadow-[0_8px_30px_rgba(16,35,29,0.06)] transition ${
+                motorbike.availability
+                  ? "cursor-pointer hover:-translate-y-1 hover:shadow-[0_16px_40px_rgba(16,35,29,0.1)]"
+                  : "opacity-60"
+              }`}
             >
               <div
                 className={`relative aspect-[4/3] overflow-hidden ${pageDetails.imageBackground}`}
               >
-                <img
-                  src={motorbike.image}
-                  alt={`${motorbike.name} motorbike available to rent`}
-                  className="h-full w-full object-cover mix-blend-multiply transition duration-700 group-hover:scale-105"
-                />
+                {motorbike.image ? (
+                  <img
+                    src={motorbike.image}
+                    alt={`${motorbike.brand} ${motorbike.name} motorbike`}
+                    className="h-full w-full object-cover mix-blend-multiply transition duration-700 group-hover:scale-105"
+                  />
+                ) : (
+                  <div className="grid h-full w-full place-items-center text-sm font-semibold text-[#10231d]/40">
+                    No photo yet
+                  </div>
+                )}
                 <span className="absolute left-4 top-4 rounded-full bg-white px-3 py-1.5 text-[10px] font-bold uppercase tracking-[0.13em] text-[#44603b]">
-                  Available
+                  {motorbike.availability ? "Available" : "Unavailable"}
                 </span>
-                <span className="absolute right-4 top-4 rounded-full bg-[#10231d] px-3 py-1.5 text-[10px] font-bold text-white">
-                  {motorbike.id}
+                <span className="absolute right-4 top-4 rounded-full bg-[#10231d] px-3 py-1.5 text-[10px] font-bold capitalize text-white">
+                  {motorbike.category}
                 </span>
               </div>
               <div className="p-6">
                 <div className="flex items-start justify-between gap-4">
                   <div>
                     <h3 className="text-xl font-bold tracking-[-0.03em]">
-                      {motorbike.name}
+                      {motorbike.brand} {motorbike.name}
                     </h3>
                     <p className="mt-1 text-xs text-[#718078]">
                       {motorbike.engine} · Helmet included
                     </p>
                   </div>
                   <p className="whitespace-nowrap text-right text-lg font-bold">
-                    {formatNpr(motorbike.price)}
+                    {formatNpr(motorbike.rate)}
                     <span className="block text-[10px] font-medium text-[#718078]">
                       per day
                     </span>
                   </p>
                 </div>
                 <div className="my-5 h-px bg-[#10231d]/10" />
-                <div className="mb-5 flex items-center gap-3 text-sm">
-                  <span className="grid h-9 w-9 place-items-center rounded-full bg-[#f1f5ec] text-[#607a54]">
-                    <Icon name="location" className="h-4 w-4" />
-                  </span>
-                  <div>
-                    <p className="font-semibold">{motorbike.station}</p>
-                    <p className="text-xs text-[#718078]">
-                      {motorbike.distance}
-                    </p>
-                  </div>
-                </div>
                 <button
+                  disabled={!motorbike.availability}
                   onClick={(event) => {
                     event.stopPropagation()
-                    setSelectedMotorbike(motorbike.id)
+                    setSelectedId(motorbike.id)
                   }}
-                  className={`flex w-full items-center justify-center gap-2 rounded-xl px-5 py-3.5 text-sm font-bold transition ${
-                    selectedMotorbike === motorbike.id
+                  className={`flex w-full items-center justify-center gap-2 rounded-xl px-5 py-3.5 text-sm font-bold transition disabled:cursor-not-allowed disabled:bg-[#10231d]/10 disabled:text-[#10231d]/40 ${
+                    selectedId === motorbike.id
                       ? "bg-[#10231d] text-white"
                       : "bg-[#d9ff57] hover:bg-[#c7ef42]"
                   }`}
                 >
-                  {selectedMotorbike === motorbike.id ? (
+                  {!motorbike.availability ? (
+                    "Unavailable"
+                  ) : selectedId === motorbike.id ? (
                     <>
                       <Icon name="check" className="h-4 w-4" /> Selected
                     </>
@@ -479,17 +337,21 @@ function MotorbikeAvailabilityPage({ category, onBack, onViewMotorbike }) {
             </article>
           ))}
         </div>
-        {selectedMotorbike && (
+
+        {selected && (
           <div className="sticky bottom-5 mx-auto mt-8 flex max-w-2xl flex-col items-center justify-between gap-4 rounded-2xl bg-[#10231d] p-4 pl-6 text-white shadow-2xl sm:flex-row">
             <div>
               <p className="text-sm font-bold">
-                {selectedMotorbike} is held for 10 minutes
+                {selected.brand} {selected.name} selected
               </p>
               <p className="text-xs text-white/55">
-                Complete your booking to reserve it.
+                {formatNpr(selected.rate)} per day · Pick your dates next.
               </p>
             </div>
-            <button className="w-full rounded-xl bg-[#d9ff57] px-6 py-3 text-sm font-bold text-[#10231d] sm:w-auto">
+            <button
+              onClick={() => onViewMotorbike(selected, category)}
+              className="w-full rounded-xl bg-[#d9ff57] px-6 py-3 text-sm font-bold text-[#10231d] sm:w-auto"
+            >
               Continue to booking
             </button>
           </div>
@@ -497,18 +359,6 @@ function MotorbikeAvailabilityPage({ category, onBack, onViewMotorbike }) {
       </section>
     </main>
   )
-}
-
-function getMotorbikeSpecs(motorbike) {
-  const serial = Number(motorbike.id.split("-")[1])
-  const isAdventure = motorbike.id.startsWith("AD")
-
-  return {
-    seats: 2,
-    model: isAdventure ? "2023 Touring" : "2024",
-    fuelType: "Petrol",
-    numberPlate: `BA ${Math.floor(serial / 10)} PA ${4000 + serial}`,
-  }
 }
 
 function addDays(date, days) {
@@ -525,8 +375,10 @@ function isSameDay(firstDate, secondDate) {
   )
 }
 
+// Placeholder pre-bookings generated from the bike id.
+// Replace with real booking data from Django later.
 function getPreBookings(motorbike, today) {
-  const serial = Number(motorbike.id.split("-")[1])
+  const serial = Number(motorbike.id)
   const firstStart = addDays(today, 5 + (serial % 5))
   const firstEnd = addDays(firstStart, 2 + (serial % 3))
   const secondStart = addDays(firstEnd, 8 + (serial % 4))
@@ -553,7 +405,6 @@ function MotorbikeDetailPage({
   const [calendarMonth, setCalendarMonth] = useState(
     () => new Date(today.getFullYear(), today.getMonth(), 1),
   )
-  const specs = getMotorbikeSpecs(motorbike)
   const pageDetails = availabilityPages[category]
   const preBookings = getPreBookings(motorbike, today)
   const nextPreBooking = preBookings.find((booking) => booking.start > today)
@@ -582,7 +433,7 @@ function MotorbikeDetailPage({
       ? Math.round((selectedEnd - selectedStart) / 86400000) + 1
       : 0
   const selectionComplete = rentalDays > 0
-  const totalCost = motorbike.price * rentalDays
+  const totalCost = motorbike.rate * rentalDays
   const selectRentalDate = (date) => {
     setSelectionError("")
 
@@ -606,10 +457,13 @@ function MotorbikeDetailPage({
     setSelectedEnd(date)
   }
   const specificationItems = [
-    ["Seats", `${specs.seats} people`],
-    ["Model", specs.model],
-    ["Fuel type", specs.fuelType],
-    ["Number plate", specs.numberPlate],
+    ["Brand", motorbike.brand],
+    ["Model", motorbike.name],
+    ["Engine", motorbike.engine],
+    [
+      "Category",
+      motorbike.category.charAt(0).toUpperCase() + motorbike.category.slice(1),
+    ],
   ]
 
   return (
@@ -652,17 +506,27 @@ function MotorbikeDetailPage({
           <div
             className={`relative min-h-[380px] overflow-hidden sm:min-h-[520px] lg:min-h-[650px] ${pageDetails.imageBackground}`}
           >
-            <img
-              src={motorbike.image}
-              alt={`${motorbike.name} rental motorbike`}
-              className="absolute inset-0 h-full w-full object-cover mix-blend-multiply"
-            />
+            {motorbike.image ? (
+              <img
+                src={motorbike.image}
+                alt={`${motorbike.brand} ${motorbike.name} rental motorbike`}
+                className="absolute inset-0 h-full w-full object-cover mix-blend-multiply"
+              />
+            ) : (
+              <div className="absolute inset-0 grid place-items-center text-sm font-semibold text-[#10231d]/40">
+                No photo yet
+              </div>
+            )}
             <div className="absolute left-5 top-5 flex items-center gap-2 rounded-full bg-white/95 px-4 py-2 text-[10px] font-bold uppercase tracking-[0.14em] shadow-sm">
-              <span className="h-2 w-2 rounded-full bg-[#77a85f]" />
-              Available now
+              <span
+                className={`h-2 w-2 rounded-full ${
+                  motorbike.availability ? "bg-[#77a85f]" : "bg-[#c55b4c]"
+                }`}
+              />
+              {motorbike.availability ? "Available now" : "Unavailable"}
             </div>
-            <span className="absolute right-5 top-5 rounded-full bg-[#10231d] px-4 py-2 text-xs font-bold text-white">
-              {motorbike.id}
+            <span className="absolute right-5 top-5 rounded-full bg-[#10231d] px-4 py-2 text-xs font-bold capitalize text-white">
+              {motorbike.category}
             </span>
           </div>
 
@@ -672,7 +536,7 @@ function MotorbikeDetailPage({
                 Spoke certified motorbike
               </p>
               <h1 className="mt-4 text-4xl font-semibold leading-none tracking-[-0.05em] sm:text-6xl">
-                {motorbike.name}
+                {motorbike.brand} {motorbike.name}
               </h1>
               <p className="mt-4 text-sm text-[#718078]">
                 {motorbike.engine} · Helmet included
@@ -694,18 +558,6 @@ function MotorbikeDetailPage({
               ))}
             </div>
 
-            <div className="mt-8 flex items-center gap-3 rounded-2xl border border-[#10231d]/10 p-4">
-              <span className="grid h-10 w-10 shrink-0 place-items-center rounded-full bg-[#f1f5ec] text-[#607a54]">
-                <Icon name="location" className="h-5 w-5" />
-              </span>
-              <div>
-                <p className="text-sm font-bold">{motorbike.station}</p>
-                <p className="text-xs text-[#718078]">
-                  {motorbike.distance} · Pick up from this rental hub
-                </p>
-              </div>
-            </div>
-
             <div className="mt-auto pt-9">
               <div className="mb-5 flex items-end justify-between gap-4">
                 <div>
@@ -717,12 +569,12 @@ function MotorbikeDetailPage({
                       : "Daily rental"}
                   </p>
                   <p className="mt-1 text-3xl font-bold tracking-[-0.04em]">
-                    {formatNpr(selectionComplete ? totalCost : motorbike.price)}
+                    {formatNpr(selectionComplete ? totalCost : motorbike.rate)}
                   </p>
                 </div>
                 {selectionComplete ? (
                   <p className="text-right text-xs leading-5 text-[#718078]">
-                    {formatNpr(motorbike.price)} × {rentalDays}
+                    {formatNpr(motorbike.rate)} × {rentalDays}
                     <br />
                     Helmet included
                   </p>
@@ -1034,6 +886,26 @@ export default function App() {
   const [detailMotorbike, setDetailMotorbike] = useState(null)
   const [checkoutBooking, setCheckoutBooking] = useState(null)
 
+const [fleet, setFleet] = useState([])
+
+useEffect(() => {
+  let ignore = false
+  fetch(`${API}/api/bikes/`)
+    .then((res) => {
+      if (!res.ok) throw new Error("Request failed")
+      return res.json()
+    })
+    .then((data) => {
+      if (!ignore) setFleet(data)
+    })
+    .catch(() => {
+      if (!ignore) setFleet([])
+    })
+  return () => {
+    ignore = true
+  }
+}, [])
+
   const openPage = (nextPage) => {
     setPage(nextPage)
     window.scrollTo({ top: 0, behavior: "smooth" })
@@ -1252,46 +1124,53 @@ export default function App() {
           </p>
         </div>
         <div className="grid gap-5 md:grid-cols-3">
-          {motorbikeTypes.map((motorbike, index) => (
-            <article
-              key={motorbike.name}
-              onClick={() => openPage(motorbike.page)}
-              className="group cursor-pointer overflow-hidden rounded-[26px] bg-white"
-            >
-              <div
-                className={`relative aspect-[4/3] overflow-hidden ${motorbike.color}`}
+          {motorbikeTypes.map((category, index) => {
+            const { bike, lowestRate } = getCategoryCard(fleet, category.page)
+            const title = bike ? `${bike.brand} ${bike.name}` : category.label
+
+            return (
+              <article
+                key={category.page}
+                onClick={() => openPage(category.page)}
+                className="group cursor-pointer overflow-hidden rounded-[26px] bg-white"
               >
-                <img
-                  src={motorbike.image}
-                  alt={`${motorbike.name} rental motorbike`}
-                  className="h-full w-full object-cover mix-blend-multiply transition duration-700 group-hover:scale-105"
-                />
-                <span className="absolute left-5 top-5 rounded-full bg-white/90 px-3 py-1.5 text-[10px] font-bold uppercase tracking-[0.14em]">
-                  {motorbike.type}
-                </span>
-                <span className="absolute right-5 top-5 text-xs font-bold">
-                  0{index + 1}
-                </span>
-              </div>
-              <div className="flex items-end justify-between p-6">
-                <div>
-                  <h3 className="text-2xl font-bold tracking-[-0.03em]">
-                    {motorbike.name}
-                  </h3>
-                  <p className="mt-1 text-sm text-[#748079]">
-                    From {formatNpr(motorbike.price)} / day
-                  </p>
-                </div>
-                <button
-                  onClick={() => openPage(motorbike.page)}
-                  aria-label={`View ${motorbike.name}`}
-                  className="grid h-11 w-11 place-items-center rounded-full bg-[#10231d] text-white transition group-hover:bg-[#d9ff57] group-hover:text-[#10231d]"
+                <div
+                  className={`relative aspect-[4/3] overflow-hidden ${category.color}`}
                 >
-                  <Icon name="arrow" className="h-4 w-4" />
-                </button>
-              </div>
-            </article>
-          ))}
+                  {bike?.image && (
+                    <img
+                      src={bike.image}
+                      alt={`${title} rental motorbike`}
+                      className="h-full w-full object-cover mix-blend-multiply transition duration-700 group-hover:scale-105"
+                    />
+                  )}
+                  <span className="absolute left-5 top-5 rounded-full bg-white/90 px-3 py-1.5 text-[10px] font-bold uppercase tracking-[0.14em]">
+                    {category.type}
+                  </span>
+                  <span className="absolute right-5 top-5 text-xs font-bold">
+                    0{index + 1}
+                  </span>
+                </div>
+                <div className="flex items-end justify-between p-6">
+                  <div>
+                    <h3 className="text-2xl font-bold tracking-[-0.03em]">{title}</h3>
+                    <p className="mt-1 text-sm text-[#748079]">
+                      {lowestRate !== null
+                        ? `From ${formatNpr(lowestRate)} / day`
+                        : "Browse the fleet"}
+                    </p>
+                  </div>
+                  <button
+                    onClick={() => openPage(category.page)}
+                    aria-label={`View ${title}`}
+                    className="grid h-11 w-11 place-items-center rounded-full bg-[#10231d] text-white transition group-hover:bg-[#d9ff57] group-hover:text-[#10231d]"
+                  >
+                    <Icon name="arrow" className="h-4 w-4" />
+                  </button>
+                </div>
+              </article>
+            )
+          })}
         </div>
       </section>
 
