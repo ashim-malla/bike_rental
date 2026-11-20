@@ -3,6 +3,7 @@ import Navbar from "./components/Navbar"
 import CheckoutPage from "./pages/CheckoutPage"
 import LoginPage from "./pages/LoginPage"
 import SignupPage from "./pages/SignupPage"
+import MotorbikesPage from "./pages/BikesPage"
 
 const API = "http://127.0.0.1:8000"
 
@@ -920,9 +921,9 @@ useEffect(() => {
     openPage("home")
   }
 
-  const openMotorbikeDetail = (motorbike, category) => {
-    setDetailMotorbike({ motorbike, category })
-    openPage("motorbike-detail")
+  const openMotorbikeDetail = (motorbike, category, from = category) => {
+  setDetailMotorbike({ motorbike, category, from })
+  openPage("motorbike-detail")
   }
 
   const openCheckout = (booking) => {
@@ -964,12 +965,21 @@ useEffect(() => {
       <MotorbikeDetailPage
         motorbike={detailMotorbike.motorbike}
         category={detailMotorbike.category}
-        onBack={() => openPage(detailMotorbike.category)}
+        onBack={() => openPage(detailMotorbike.from)}
         onCheckout={openCheckout}
         onHome={() => openPage("home")}
       />
     )
   }
+
+  if (page === "motorbikes") {
+  return (
+    <MotorbikesPage
+      onBack={() => openPage("home")}
+      onViewMotorbike={openMotorbikeDetail}
+    />
+  )
+}
 
   if (availabilityPages[page]) {
     return (

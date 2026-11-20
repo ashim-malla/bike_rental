@@ -47,7 +47,7 @@ export default function CheckoutPage({ booking, currentUser, onBack, onHome }) {
   const [paymentMethod, setPaymentMethod] = useState("pickup")
   const [confirmed, setConfirmed] = useState(false)
   const { motorbike, pickupDate, returnDate, rentalDays, totalCost } = booking
-  const formatNpr = (price) => `NPR ${price.toLocaleString("en-NP")}`
+  const formatNpr = (rate) => `NPR ${Number(rate).toLocaleString("en-NP")}`
   const formatDate = (date) =>
     date.toLocaleDateString("en-NP", {
       weekday: "short",
@@ -55,7 +55,7 @@ export default function CheckoutPage({ booking, currentUser, onBack, onHome }) {
       day: "numeric",
       year: "numeric",
     })
-  const bookingReference = `SPK-${motorbike.id.replace("-", "")}-${rentalDays}D`
+  const bookingReference = `SPK-${String(motorbike.id).padStart(4, "0")}-${rentalDays}D`
 
   const handleSubmit = (event) => {
     event.preventDefault()
@@ -78,8 +78,8 @@ export default function CheckoutPage({ booking, currentUser, onBack, onHome }) {
               You’re ready to ride.
             </h1>
             <p className="mx-auto mt-4 max-w-md text-sm leading-6 text-white/60">
-              Your {motorbike.name} is reserved. Bring your driving licence and
-              booking reference to the rental hub.
+              Your {motorbike.brand} {motorbike.name} is reserved. Bring your
+              driving licence and booking reference to the rental hub.
             </p>
           </div>
 
@@ -338,11 +338,17 @@ export default function CheckoutPage({ booking, currentUser, onBack, onHome }) {
 
           <aside className="overflow-hidden rounded-[24px] bg-white shadow-[0_12px_40px_rgba(16,35,29,0.09)] lg:sticky lg:top-6">
             <div className="relative aspect-[16/9] overflow-hidden bg-[#e8e1ff]">
-              <img
-                src={motorbike.image}
-                alt={`${motorbike.name} booking summary`}
-                className="h-full w-full object-cover mix-blend-multiply"
-              />
+              {motorbike.image ? (
+                <img
+                  src={motorbike.image}
+                  alt={`${motorbike.brand} ${motorbike.name} booking summary`}
+                  className="h-full w-full object-cover mix-blend-multiply"
+                />
+              ) : (
+                <div className="grid h-full w-full place-items-center text-sm font-semibold text-[#10231d]/40">
+                  No photo yet
+                </div>
+              )}
               <span className="absolute left-4 top-4 rounded-full bg-white px-3 py-1.5 text-[10px] font-bold uppercase tracking-[0.12em]">
                 Held for 10 minutes
               </span>
@@ -354,46 +360,32 @@ export default function CheckoutPage({ booking, currentUser, onBack, onHome }) {
               <div className="mt-3 flex items-start justify-between gap-4">
                 <div>
                   <h2 className="text-2xl font-bold tracking-[-0.035em]">
-                    {motorbike.name}
+                    {motorbike.brand} {motorbike.name}
                   </h2>
                   <p className="mt-1 text-xs text-[#718078]">
-                    {motorbike.engine} · {motorbike.id}
+                    {motorbike.engine} · Helmet included
                   </p>
                 </div>
                 <p className="whitespace-nowrap text-sm font-bold">
-                  {formatNpr(motorbike.price)}/day
+                  {formatNpr(motorbike.rate)}/day
                 </p>
               </div>
 
               <div className="my-6 h-px bg-[#10231d]/10" />
 
-              <div className="space-y-4">
-                <div className="flex gap-3">
-                  <CheckoutIcon
-                    name="calendar"
-                    className="mt-0.5 h-5 w-5 shrink-0 text-[#607a54]"
-                  />
-                  <div className="grid flex-1 grid-cols-2 gap-3 text-xs">
-                    <div>
-                      <p className="text-[#718078]">Pickup</p>
-                      <p className="mt-1 font-bold">{formatDate(pickupDate)}</p>
-                    </div>
-                    <div>
-                      <p className="text-[#718078]">Return</p>
-                      <p className="mt-1 font-bold">{formatDate(returnDate)}</p>
-                    </div>
-                  </div>
-                </div>
-                <div className="flex items-center gap-3">
-                  <CheckoutIcon
-                    name="location"
-                    className="h-5 w-5 shrink-0 text-[#607a54]"
-                  />
+              <div className="flex gap-3">
+                <CheckoutIcon
+                  name="calendar"
+                  className="mt-0.5 h-5 w-5 shrink-0 text-[#607a54]"
+                />
+                <div className="grid flex-1 grid-cols-2 gap-3 text-xs">
                   <div>
-                    <p className="text-xs font-bold">{motorbike.station}</p>
-                    <p className="mt-0.5 text-[11px] text-[#718078]">
-                      Pickup and return location
-                    </p>
+                    <p className="text-[#718078]">Pickup</p>
+                    <p className="mt-1 font-bold">{formatDate(pickupDate)}</p>
+                  </div>
+                  <div>
+                    <p className="text-[#718078]">Return</p>
+                    <p className="mt-1 font-bold">{formatDate(returnDate)}</p>
                   </div>
                 </div>
               </div>
@@ -403,7 +395,7 @@ export default function CheckoutPage({ booking, currentUser, onBack, onHome }) {
               <div className="space-y-3 text-sm">
                 <div className="flex justify-between gap-4">
                   <span className="text-[#718078]">
-                    {formatNpr(motorbike.price)} × {rentalDays}{" "}
+                    {formatNpr(motorbike.rate)} × {rentalDays}{" "}
                     {rentalDays === 1 ? "day" : "days"}
                   </span>
                   <span className="font-semibold">{formatNpr(totalCost)}</span>

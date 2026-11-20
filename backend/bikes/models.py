@@ -15,6 +15,7 @@ class Bike(models.Model):
     category = models.CharField(choices=CATEGORIES)
     image = models.ImageField(upload_to='bikes/', blank=True, null=True)
     availability = models.BooleanField(default=True)
+    registration_number = models.CharField(max_length=20, unique=True, null=True, blank=True)
 
 def __str__(self):
     return f"{self.brand} {self.name}"

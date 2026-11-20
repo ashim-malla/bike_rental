@@ -5,4 +5,4 @@ from .models import Bike
 class BikeSerializer(serializers.ModelSerializer):
     class Meta:
         model = Bike
-        fields = ["name", "brand", "category", "engine", "rate", "image", "availability"]
+        fields = ["id", "name", "brand", "category", "engine", "rate", "image", "availability", "registration_number"]

@@ -37,9 +37,12 @@ export default function Navbar({ currentUser, onNavigate }) {
         </a>
 
         <div className="hidden items-center gap-10 text-sm font-medium lg:flex">
-          <a className="transition hover:text-[#d9ff57]" href="#motorbikes">
+          <button
+            onClick={() => navigateTo("motorbikes")}
+            className="transition hover:text-[#d9ff57]"
+          >
             Our motorbikes
-          </a>
+          </button>
           <a className="transition hover:text-[#d9ff57]" href="#how">
             How it works
           </a>
@@ -115,9 +118,9 @@ export default function Navbar({ currentUser, onNavigate }) {
       {menuOpen && (
         <div className="absolute left-5 right-5 top-20 z-30 rounded-2xl bg-[#f4f1e8] p-6 text-[#10231d] shadow-2xl lg:hidden">
           <div className="flex flex-col gap-5 font-semibold">
-            <a onClick={() => setMenuOpen(false)} href="#motorbikes">
+            <button onClick={() => navigateTo("motorbikes")} className="text-left">
               Our motorbikes
-            </a>
+            </button>
             <a onClick={() => setMenuOpen(false)} href="#how">
               How it works
             </a>
