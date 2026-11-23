@@ -465,6 +465,7 @@ function MotorbikeDetailPage({
       "Category",
       motorbike.category.charAt(0).toUpperCase() + motorbike.category.slice(1),
     ],
+    ["Registration no.", motorbike.registration_number || "Not assigned"],
   ]
 
   return (
@@ -547,8 +548,16 @@ function MotorbikeDetailPage({
             <div className="my-8 h-px bg-[#10231d]/10" />
 
             <div className="grid grid-cols-2 gap-px overflow-hidden rounded-2xl bg-[#10231d]/10">
-              {specificationItems.map(([label, value]) => (
-                <div key={label} className="bg-[#f8f6ef] p-5 sm:p-6">
+              {specificationItems.map(([label, value], index) => (
+                <div
+                  key={label}
+                  className={`bg-[#f8f6ef] p-5 sm:p-6 ${
+                    index === specificationItems.length - 1 &&
+                    specificationItems.length % 2 === 1
+                      ? "col-span-2"
+                      : ""
+                  }`}
+                >
                   <p className="text-[10px] font-bold uppercase tracking-[0.14em] text-[#718078]">
                     {label}
                   </p>

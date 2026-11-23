@@ -1,10 +1,13 @@
 import { useState } from "react"
 import AuthLayout, { AuthIcon } from "../components/AuthLayout"
 
+const API = "http://127.0.0.1:8000"
+
 export default function SignupPage({ onNavigate, onAuthenticated }) {
   const [formError, setFormError] = useState("")
+  const [submitting, setSubmitting] = useState(false)
 
-  const handleSubmit = (event) => {
+  const handleSubmit = async (event) => {
     event.preventDefault()
     setFormError("")
 
@@ -14,7 +17,30 @@ export default function SignupPage({ onNavigate, onAuthenticated }) {
       return
     }
 
-    onAuthenticated({ name: String(formData.get("fullName")).trim() })
+    setSubmitting(true)
+    try {
+      const res = await fetch(`${API}/api/auth/register/`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          name: String(formData.get("fullName")).trim(),
+          phone: String(formData.get("phone")).trim(),
+          email: String(formData.get("email")).trim(),
+          password: String(formData.get("password")),
+        }),
+      })
+      const data = await res.json().catch(() => ({}))
+
+      if (!res.ok) {
+        setFormError(data.detail || "Could not create your account.")
+        return
+      }
+      onAuthenticated(data.user, data.token)
+    } catch {
+      setFormError("Could not reach the server. Is Django running?")
+    } finally {
+      setSubmitting(false)
+    }
   }
 
   return (
@@ -115,10 +141,11 @@ export default function SignupPage({ onNavigate, onAuthenticated }) {
         )}
         <button
           type="submit"
-          className="flex w-full items-center justify-center gap-2 rounded-xl bg-[#10231d] px-5 py-4 text-sm font-bold text-white transition hover:bg-[#1e3b31]"
+          disabled={submitting}
+          className="flex w-full items-center justify-center gap-2 rounded-xl bg-[#10231d] px-5 py-4 text-sm font-bold text-white transition hover:bg-[#1e3b31] disabled:cursor-not-allowed disabled:opacity-60"
         >
-          Create account
-          <AuthIcon name="arrow" className="h-4 w-4" />
+          {submitting ? "Creating account…" : "Create account"}
+          {!submitting && <AuthIcon name="arrow" className="h-4 w-4" />}
         </button>
       </form>
 

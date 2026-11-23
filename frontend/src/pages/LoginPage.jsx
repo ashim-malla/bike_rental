@@ -1,20 +1,41 @@
 import { useState } from "react"
 import AuthLayout, { AuthIcon } from "../components/AuthLayout"
 
+const API = "http://127.0.0.1:8000"
+
 export default function LoginPage({ onNavigate, onAuthenticated }) {
   const [formMessage, setFormMessage] = useState("")
+  const [error, setError] = useState("")
+  const [submitting, setSubmitting] = useState(false)
 
-  const handleSubmit = (event) => {
+  const handleSubmit = async (event) => {
     event.preventDefault()
+    setError("")
+    setFormMessage("")
     const formData = new FormData(event.currentTarget)
-    const emailName = String(formData.get("email"))
-      .split("@")[0]
-      .split(/[._-]+/)
-      .filter(Boolean)
-      .map((part) => part.charAt(0).toUpperCase() + part.slice(1))
-      .join(" ")
+    setSubmitting(true)
 
-    onAuthenticated({ name: emailName || "Spoke Rider" })
+    try {
+      const res = await fetch(`${API}/api/auth/login/`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          email: String(formData.get("email")),
+          password: String(formData.get("password")),
+        }),
+      })
+      const data = await res.json().catch(() => ({}))
+
+      if (!res.ok) {
+        setError(data.detail || "Could not sign in. Please try again.")
+        return
+      }
+      onAuthenticated(data.user, data.token)
+    } catch {
+      setError("Could not reach the server. Is Django running?")
+    } finally {
+      setSubmitting(false)
+    }
   }
 
   return (
@@ -62,11 +83,19 @@ export default function LoginPage({ onNavigate, onAuthenticated }) {
             type="password"
             autoComplete="current-password"
             required
-            minLength={8}
             placeholder="Your password"
             className="w-full rounded-xl border border-[#10231d]/15 bg-white px-4 py-3.5 text-sm outline-none transition placeholder:text-[#8e9893] focus:border-[#607a54] focus:ring-4 focus:ring-[#607a54]/10"
           />
         </label>
+
+        {error && (
+          <p
+            className="rounded-xl bg-[#ffe3df] px-4 py-3 text-sm font-semibold text-[#8a2f25]"
+            role="alert"
+          >
+            {error}
+          </p>
+        )}
 
         {formMessage && (
           <p
@@ -79,10 +108,11 @@ export default function LoginPage({ onNavigate, onAuthenticated }) {
 
         <button
           type="submit"
-          className="flex w-full items-center justify-center gap-2 rounded-xl bg-[#10231d] px-5 py-4 text-sm font-bold text-white transition hover:bg-[#1e3b31]"
+          disabled={submitting}
+          className="flex w-full items-center justify-center gap-2 rounded-xl bg-[#10231d] px-5 py-4 text-sm font-bold text-white transition hover:bg-[#1e3b31] disabled:cursor-not-allowed disabled:opacity-60"
         >
-          Sign in
-          <AuthIcon name="arrow" className="h-4 w-4" />
+          {submitting ? "Signing in…" : "Sign in"}
+          {!submitting && <AuthIcon name="arrow" className="h-4 w-4" />}
         </button>
       </form>
 
