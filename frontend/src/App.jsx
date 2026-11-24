@@ -921,6 +921,18 @@ useEffect(() => {
     window.scrollTo({ top: 0, behavior: "smooth" })
   }
 
+  const handleLogout = () => {
+    const token = localStorage.getItem("spokeToken")
+    localStorage.removeItem("spokeToken")
+    setCurrentUser(null)
+    if (token) {
+      fetch(`${API}/api/auth/logout/`, {
+        method: "POST",
+        headers: { Authorization: `Token ${token}` },
+      }).catch(() => {})
+    }
+  }
+
   const submitBooking = () => {
     setBookingMessage("Great choice — 12 motorbikes are available near Thamel.")
   }
@@ -1012,7 +1024,7 @@ useEffect(() => {
           <div className="absolute inset-0 bg-gradient-to-b from-[#132a22]/30 via-[#132a22]/25 to-[#132a22] lg:bg-gradient-to-r lg:from-[#132a22] lg:via-[#132a22]/20 lg:to-transparent" />
         </div>
 
-        <Navbar currentUser={currentUser} onNavigate={openPage} />
+        <Navbar currentUser={currentUser} onNavigate={openPage} onLogout={handleLogout}/>
 
         <div className="relative z-10 mx-auto max-w-[1440px] px-5 pt-14 sm:px-8 lg:px-12 lg:pt-20">
           <div className="max-w-[660px]">

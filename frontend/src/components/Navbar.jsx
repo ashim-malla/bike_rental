@@ -16,7 +16,7 @@ function MenuIcon() {
   )
 }
 
-export default function Navbar({ currentUser, onNavigate }) {
+export default function Navbar({ currentUser, onNavigate, onLogout }) {
   const [menuOpen, setMenuOpen] = useState(false)
 
   const navigateTo = (page) => {
@@ -58,6 +58,11 @@ export default function Navbar({ currentUser, onNavigate }) {
                 {currentUser.name.charAt(0).toUpperCase()}
               </span>
               <span className="max-w-36 truncate">{currentUser.name}</span>
+              <button onClick={onLogout}
+              className="ml-3 text-sm font-semibold transition hover:text-[#d9ff57]"
+              >
+              Sign out
+              </button>
             </div>
           ) : (
             <>
@@ -133,6 +138,12 @@ export default function Navbar({ currentUser, onNavigate }) {
                   {currentUser.name.charAt(0).toUpperCase()}
                 </span>
                 <span className="truncate">{currentUser.name}</span>
+                <button onClick={() => {
+                  setMenuOpen(false)
+                  onLogout()}}
+                  className="text-left">
+                  Sign out
+                </button>
               </div>
             ) : (
               <>
