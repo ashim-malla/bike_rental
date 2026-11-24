@@ -1,5 +1,6 @@
 # bikes/models.py
 from django.db import models
+from django.conf import settings
 
 class Bike(models.Model):
     CATEGORIES = [
@@ -16,6 +17,8 @@ class Bike(models.Model):
     image = models.ImageField(upload_to='bikes/', blank=True, null=True)
     availability = models.BooleanField(default=True)
     registration_number = models.CharField(max_length=20, unique=True, null=True, blank=True)
+
+
 
 def __str__(self):
     return f"{self.brand} {self.name}"

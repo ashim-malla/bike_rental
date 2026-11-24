@@ -4,6 +4,8 @@ import CheckoutPage from "./pages/CheckoutPage"
 import LoginPage from "./pages/LoginPage"
 import SignupPage from "./pages/SignupPage"
 import MotorbikesPage from "./pages/BikesPage"
+import DashboardPage from "./pages/DashboardPage"
+import MyBookingsPage from "./pages/MyBookingsPage"
 
 const API = "http://127.0.0.1:8000"
 
@@ -993,7 +995,36 @@ useEffect(() => {
     )
   }
 
-  if (page === "motorbikes") {
+  if (page === "dashboard") {
+    return currentUser ? (
+      <DashboardPage
+        currentUser={currentUser}
+        onHome={() => openPage("home")}
+        onBookings={() => openPage("bookings")}
+        onBrowse={() => openPage("motorbikes")}
+        onLogout={() => {
+          handleLogout()
+          openPage("home")
+        }}
+      />
+   ) : (
+    <LoginPage onNavigate={openPage} onAuthenticated={completeAuthentication} />
+    )
+  }
+
+if (page === "bookings") {
+  return currentUser ? (
+    <MyBookingsPage
+      onHome={() => openPage("home")}
+      onDashboard={() => openPage("dashboard")}
+      onBrowse={() => openPage("motorbikes")}
+    />
+  ) : (
+    <LoginPage onNavigate={openPage} onAuthenticated={completeAuthentication} />
+  )
+}
+
+if (page === "motorbikes") {
   return (
     <MotorbikesPage
       onBack={() => openPage("home")}

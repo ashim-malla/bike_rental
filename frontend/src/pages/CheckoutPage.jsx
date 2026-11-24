@@ -43,9 +43,27 @@ function CheckoutIcon({ name, className = "h-5 w-5" }) {
 const inputClassName =
   "w-full rounded-xl border border-[#10231d]/15 bg-white px-4 py-3.5 text-sm outline-none transition placeholder:text-[#8e9893] focus:border-[#607a54] focus:ring-4 focus:ring-[#607a54]/10"
 
-export default function CheckoutPage({ booking, currentUser, onBack, onHome }) {
+const API = "http://127.0.0.1:8000"
+
+// Local date as YYYY-MM-DD (toISOString would shift the day in Nepal's timezone)
+const toDateString = (date) => {
+  const month = String(date.getMonth() + 1).padStart(2, "0")
+  const day = String(date.getDate()).padStart(2, "0")
+  return `${date.getFullYear()}-${month}-${day}`
+}
+
+export default function CheckoutPage({
+  booking,
+  currentUser,
+  onBack,
+  onHome,
+  onNavigate,
+}) {
   const [paymentMethod, setPaymentMethod] = useState("pickup")
-  const [confirmed, setConfirmed] = useState(false)
+  const [confirmedBooking, setConfirmedBooking] = useState(null)
+  const [submitting, setSubmitting] = useState(false)
+  const [submitError, setSubmitError] = useState("")
+  const confirmed = confirmedBooking !== null
   const { motorbike, pickupDate, returnDate, rentalDays, totalCost } = booking
   const formatNpr = (rate) => `NPR ${Number(rate).toLocaleString("en-NP")}`
   const formatDate = (date) =>
@@ -55,12 +73,46 @@ export default function CheckoutPage({ booking, currentUser, onBack, onHome }) {
       day: "numeric",
       year: "numeric",
     })
-  const bookingReference = `SPK-${String(motorbike.id).padStart(4, "0")}-${rentalDays}D`
+  const bookingReference = confirmedBooking?.reference ?? ""
 
-  const handleSubmit = (event) => {
+  const handleSubmit = async (event) => {
     event.preventDefault()
-    setConfirmed(true)
-    window.scrollTo({ top: 0, behavior: "smooth" })
+    setSubmitError("")
+
+    const token = localStorage.getItem("spokeToken")
+    if (!currentUser || !token) {
+      setSubmitError("Please sign in to complete your booking.")
+      return
+    }
+
+    setSubmitting(true)
+    try {
+      const res = await fetch(`${API}/api/bookings/`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Token ${token}`,
+        },
+        body: JSON.stringify({
+          bike: motorbike.id,
+          pickup_date: toDateString(pickupDate),
+          return_date: toDateString(returnDate),
+          payment_method: paymentMethod,
+        }),
+      })
+      const data = await res.json().catch(() => ({}))
+
+      if (!res.ok) {
+        setSubmitError(data.detail || "Could not save your booking.")
+        return
+      }
+      setConfirmedBooking(data)
+      window.scrollTo({ top: 0, behavior: "smooth" })
+    } catch {
+      setSubmitError("Could not reach the server. Is Django running?")
+    } finally {
+      setSubmitting(false)
+    }
   }
 
   if (confirmed) {
@@ -118,6 +170,12 @@ export default function CheckoutPage({ booking, currentUser, onBack, onHome }) {
             >
               Back to home
               <CheckoutIcon name="arrow" className="h-4 w-4" />
+            </button>
+            <button
+              onClick={() => onNavigate("bookings")}
+              className="mt-3 flex w-full items-center justify-center gap-2 rounded-xl border border-[#10231d]/15 px-6 py-4 text-sm font-bold transition hover:bg-[#f4f1e8]"
+            >
+              View my bookings
             </button>
           </div>
         </section>
@@ -410,14 +468,39 @@ export default function CheckoutPage({ booking, currentUser, onBack, onHome }) {
                 </div>
               </div>
 
+              {!currentUser && (
+                <p className="mt-6 rounded-xl bg-[#f8f6ef] px-4 py-3 text-xs leading-5 text-[#66736d]">
+                  You need an account to book.{" "}
+                  <button
+                    type="button"
+                    onClick={() => onNavigate("login")}
+                    className="font-bold text-[#10231d] underline decoration-[#d9ff57] decoration-2 underline-offset-4"
+                  >
+                    Sign in
+                  </button>
+                </p>
+              )}
+              {submitError && (
+                <p
+                  className="mt-6 rounded-xl bg-[#ffe3df] px-4 py-3 text-sm font-semibold text-[#8a2f25]"
+                  role="alert"
+                >
+                  {submitError}
+                </p>
+              )}
               <button
                 type="submit"
-                className="mt-7 flex w-full items-center justify-center gap-2 rounded-xl bg-[#d9ff57] px-6 py-4 text-sm font-bold transition hover:bg-[#c7ef42]"
+                disabled={submitting || !currentUser}
+                className="mt-7 flex w-full items-center justify-center gap-2 rounded-xl bg-[#d9ff57] px-6 py-4 text-sm font-bold transition hover:bg-[#c7ef42] disabled:cursor-not-allowed disabled:opacity-60"
               >
-                {paymentMethod === "pickup"
-                  ? "Confirm booking"
-                  : `Pay ${formatNpr(totalCost)}`}
-                <CheckoutIcon name="arrow" className="h-4 w-4" />
+                {submitting
+                  ? "Saving your booking…"
+                  : paymentMethod === "pickup"
+                    ? "Confirm booking"
+                    : `Pay ${formatNpr(totalCost)}`}
+                {!submitting && (
+                  <CheckoutIcon name="arrow" className="h-4 w-4" />
+                )}
               </button>
               <p className="mt-4 flex items-center justify-center gap-2 text-center text-[11px] text-[#718078]">
                 <CheckoutIcon name="shield" className="h-4 w-4" />

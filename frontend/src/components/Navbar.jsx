@@ -43,6 +43,14 @@ export default function Navbar({ currentUser, onNavigate, onLogout }) {
           >
             Our motorbikes
           </button>
+          {currentUser && (
+            <button
+              onClick={() => navigateTo("bookings")}
+              className="transition hover:text-[#d9ff57]"
+            >
+              My bookings
+            </button>
+          )}
           <a className="transition hover:text-[#d9ff57]" href="#how">
             How it works
           </a>
@@ -54,14 +62,21 @@ export default function Navbar({ currentUser, onNavigate, onLogout }) {
         <div className="hidden items-center gap-5 lg:flex">
           {currentUser ? (
             <div className="flex items-center gap-2.5 text-sm font-semibold">
-              <span className="grid h-9 w-9 place-items-center rounded-full bg-white/10 text-xs text-[#d9ff57]">
-                {currentUser.name.charAt(0).toUpperCase()}
-              </span>
-              <span className="max-w-36 truncate">{currentUser.name}</span>
-              <button onClick={onLogout}
-              className="ml-3 text-sm font-semibold transition hover:text-[#d9ff57]"
+              <button
+                onClick={() => navigateTo("dashboard")}
+                className="flex items-center gap-2.5 transition hover:text-[#d9ff57]"
+                aria-label="Open my dashboard"
               >
-              Sign out
+                <span className="grid h-9 w-9 place-items-center rounded-full bg-white/10 text-xs text-[#d9ff57]">
+                  {currentUser.name.charAt(0).toUpperCase()}
+                </span>
+                <span className="max-w-36 truncate">{currentUser.name}</span>
+              </button>
+              <button
+                onClick={onLogout}
+                className="ml-3 text-sm font-semibold transition hover:text-[#d9ff57]"
+              >
+                Sign out
               </button>
             </div>
           ) : (
@@ -90,9 +105,13 @@ export default function Navbar({ currentUser, onNavigate, onLogout }) {
 
         <div className="flex items-center gap-2 lg:hidden">
           {currentUser ? (
-            <span className="max-w-24 truncate text-xs font-bold text-[#d9ff57] sm:max-w-40">
+            <button
+              onClick={() => navigateTo("dashboard")}
+              className="max-w-24 truncate text-xs font-bold text-[#d9ff57] sm:max-w-40"
+              aria-label="Open my dashboard"
+            >
               {currentUser.name}
-            </span>
+            </button>
           ) : (
             <div className="flex items-center gap-2 text-xs font-bold">
               <button
@@ -123,9 +142,20 @@ export default function Navbar({ currentUser, onNavigate, onLogout }) {
       {menuOpen && (
         <div className="absolute left-5 right-5 top-20 z-30 rounded-2xl bg-[#f4f1e8] p-6 text-[#10231d] shadow-2xl lg:hidden">
           <div className="flex flex-col gap-5 font-semibold">
-            <button onClick={() => navigateTo("motorbikes")} className="text-left">
+            <button
+              onClick={() => navigateTo("motorbikes")}
+              className="text-left"
+            >
               Our motorbikes
             </button>
+            {currentUser && (
+              <button
+                onClick={() => navigateTo("bookings")}
+                className="text-left"
+              >
+                My bookings
+              </button>
+            )}
             <a onClick={() => setMenuOpen(false)} href="#how">
               How it works
             </a>
@@ -133,18 +163,26 @@ export default function Navbar({ currentUser, onNavigate, onLogout }) {
               Locations
             </a>
             {currentUser ? (
-              <div className="flex items-center gap-3 rounded-xl bg-[#10231d]/5 p-3">
-                <span className="grid h-9 w-9 place-items-center rounded-full bg-[#10231d] text-xs text-[#d9ff57]">
-                  {currentUser.name.charAt(0).toUpperCase()}
-                </span>
-                <span className="truncate">{currentUser.name}</span>
-                <button onClick={() => {
-                  setMenuOpen(false)
-                  onLogout()}}
-                  className="text-left">
+              <>
+                <button
+                  onClick={() => navigateTo("dashboard")}
+                  className="flex items-center gap-3 rounded-xl bg-[#10231d]/5 p-3 text-left"
+                >
+                  <span className="grid h-9 w-9 place-items-center rounded-full bg-[#10231d] text-xs text-[#d9ff57]">
+                    {currentUser.name.charAt(0).toUpperCase()}
+                  </span>
+                  <span className="truncate">{currentUser.name}</span>
+                </button>
+                <button
+                  onClick={() => {
+                    setMenuOpen(false)
+                    onLogout()
+                  }}
+                  className="text-left"
+                >
                   Sign out
                 </button>
-              </div>
+              </>
             ) : (
               <>
                 <button
